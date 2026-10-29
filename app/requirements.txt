@@ -1,0 +1,2 @@
+# Intentionally outdated test fixture - do not deploy
+requests==2.19.1
