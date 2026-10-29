@@ -1,0 +1,25 @@
+name: scan-gate
+on:
+  workflow_dispatch:               # start the run by hand from the Actions tab
+    inputs:
+      threshold:
+        description: Severities that fail the gate
+        type: choice
+        options:
+          - CRITICAL
+          - HIGH,CRITICAL
+        default: CRITICAL
+permissions:
+  contents: read                   # the job's token can read the repository and nothing else
+jobs:
+  scan-gate:
+    runs-on: ubuntu-24.04          # a fixed runner image, not a moving label
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false   # do not leave the token in the checkout's git config
+      - name: Run the scan gate
+        env:
+          THRESHOLD: ${{ inputs.threshold }}   # passed as an environment variable, not pasted into the script
+        run: bash ci/scan-gate.sh app
